@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface PostRepository extends JpaRepository<Post,Long> {
     Optional<List<Post>> findByApprenti(Apprenti apprenti);
     Optional<List<Post>> findByCompetence(Competence competence);
+
+
 }

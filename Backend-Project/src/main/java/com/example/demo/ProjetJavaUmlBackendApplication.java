@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import com.example.demo.entities.Apprenti;
 import com.example.demo.entities.Competence;
 import com.example.demo.entities.Formateur;
 import com.example.demo.entities.Utilisateur;
@@ -42,6 +43,15 @@ public class ProjetJavaUmlBackendApplication {
             Competence competence1 = competenceRepository.findByNom("java");
             Competence competence2 = competenceRepository.findByNom("math");
             Formateur formateur1 = (Formateur) utilisateurRepository.findByEmail("formateur.said@ehtp.ac.ma").orElse(null);
+
+            Apprenti apprenti = new Apprenti();
+            apprenti.setNom("imane");
+            apprenti.setPrenom("appr");
+            apprenti.setEmail("imane@gmail.com");
+            apprenti.setTelephone("0653356");
+            apprenti.setPassword(passwordEncoder.encode("1234"));
+            apprenti = utilisateurRepository.save(apprenti);
+
 
             if (formateur1 == null) {
                 formateur1 = new Formateur();
