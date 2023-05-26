@@ -1,17 +1,16 @@
 package com.example.demo.web;
 
 
-import com.example.demo.dto.AuthRequest;
-import com.example.demo.dto.AuthResponse;
-import com.example.demo.dto.PostDTO;
-import com.example.demo.dto.PostDtoResponse;
+import com.example.demo.dto.*;
 import com.example.demo.entities.*;
 import com.example.demo.repositories.CompetenceRepository;
 import com.example.demo.repositories.UtilisateurRepository;
+import com.example.demo.repositories.ValidationRepository;
 import com.example.demo.security.UserInfoDetailsService;
 import com.example.demo.security.UserInfoUserDetails;
 import com.example.demo.services.PostService;
 import com.example.demo.services.UserService;
+import com.example.demo.services.ValidationService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
@@ -35,8 +34,11 @@ public class RestApiController {
 
     UserService userService;
     PostService postService;
+    ValidationService validationService;
+
     CompetenceRepository competenceRepository;
     UtilisateurRepository utilisateurRepository;
+    ValidationRepository validationRepository;
 
     AuthenticationManager authenticationManager;
     UserInfoDetailsService userInfoDetailsService;
@@ -149,6 +151,34 @@ public class RestApiController {
         return false;
     }
 
+
+    @PostMapping("/validateFormateur")
+    public Boolean validateByFormateur(@RequestBody PostDTO postDTO,HttpServletRequest request)
+    {
+        Utilisateur utilisateur = getCurrentUser(request);
+        if(utilisateur instanceof Formateur){
+            return validationService.validateByFormateur(postDTO,(Formateur) utilisateur);
+        }
+        else return false;
+    }
+
+    @GetMapping("/post/listFormateurAccepte")
+    public List<FormateurDTO> getFormateursAccepteByPost(@RequestBody PostDTO postDTO)
+    {
+        return validationService.getFormateursAccepteByPost(postDTO);
+    }
+
+    @PostMapping("/validateApprenti")
+    public Boolean validateByApprenti(@RequestBody PostDTO postDTO,@RequestBody FormateurDTO formateurDTO)
+    {
+        return validationService.validateByApprenti(postDTO,formateurDTO);
+    }
+
+    @GetMapping("/FormateurProfil")
+    public FormateurDTO getFormateurByPrenomAndNom(@RequestParam String prenom, @RequestParam String nom)
+    {
+        return validationService.getFormateurByPrenomAndNom(prenom,nom);
+    }
 
 
 
