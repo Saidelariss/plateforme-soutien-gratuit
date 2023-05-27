@@ -1,13 +1,12 @@
 package com.example.demo.web;
 
 
-import com.example.demo.dto.AuthRequest;
-import com.example.demo.dto.AuthResponse;
-import com.example.demo.dto.PostDTO;
-import com.example.demo.dto.PostDtoResponse;
+import com.example.demo.dto.*;
 import com.example.demo.entities.*;
 import com.example.demo.repositories.CompetenceRepository;
+import com.example.demo.repositories.PostRepository;
 import com.example.demo.repositories.UtilisateurRepository;
+import com.example.demo.repositories.ValidationRepository;
 import com.example.demo.security.UserInfoDetailsService;
 import com.example.demo.security.UserInfoUserDetails;
 import com.example.demo.services.PostService;
@@ -41,6 +40,8 @@ public class RestApiController {
     AuthenticationManager authenticationManager;
     UserInfoDetailsService userInfoDetailsService;
 
+    PostRepository postRepository;
+    ValidationRepository validationRepository;
 
     @PostMapping(path="/register/apprenti")
     public Apprenti saveApprenti(@RequestBody Apprenti apprenti){
@@ -147,6 +148,46 @@ public class RestApiController {
             return true;
         }
         return false;
+    }
+
+    @PostMapping("/formateur/post/validate")
+     public Boolean validatePostByFormateur(@RequestBody ValidatePostByFormateur v) {
+
+        Post post = postRepository.findById(v.getPostId()).orElse(null);
+        Formateur formateur = (Formateur) utilisateurRepository.findByEmail(v.getEmailFormateur()).orElse(null);
+        System.out.println("idpost : " + post.getId() + "   ----  formateur: " + formateur.getNom());
+        Validation validation = new Validation();
+        validation.setPost(post);
+        validation.setFormateur(formateur);
+        validation.setFormateurAccepte(true);
+        validation.setApprentiAccepte(false);
+        validationRepository.save(validation);
+        formateur.getValidations().add(validation);
+        post.getValidations().add(validation);
+        utilisateurRepository.save(formateur);
+        postRepository.save(post);
+
+        return true;
+
+    }
+
+
+    @GetMapping("/apprenti/post/formateurs")
+    public List<FormateurResponse> getFormateursByPost(@RequestParam Long postId){
+        Post post = postRepository.findById(postId).orElse(null);
+        List<Validation> validations = validationRepository.findByPost(post);
+        List<FormateurResponse> formateurResponses = new ArrayList<>();
+        for (Validation v : validations){
+            FormateurResponse formateurResponse = new FormateurResponse();
+            formateurResponse.setEmail(v.getFormateur().getEmail());
+            formateurResponse.setTelephone(v.getFormateur().getTelephone());
+            formateurResponse.setNom(v.getFormateur().getNom());
+            formateurResponse.setPrenom(v.getFormateur().getPrenom());
+            formateurResponses.add(formateurResponse);
+        }
+        return formateurResponses;
+
+
     }
 
 
