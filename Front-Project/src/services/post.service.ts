@@ -47,4 +47,20 @@ export class PostService {
     return this.http.get<Post[]>(url);
     }
 
+
+    ValidatePostByFormateur(postId:number,emailFormateur:string):Observable<Boolean>{
+        const postValidateByFormateur = { postId:postId ,emailFormateur:emailFormateur };
+        const headers = new HttpHeaders().set('Content-Type', 'application/json');
+        return this.http.post<Boolean>("http://localhost:8080/api/formateur/post/validate",postValidateByFormateur,{ headers: headers });
+    }
+
+    getFormateursByPost(postId:number):Observable<{email:string,telephone:string}[]>{
+        return this.http.get<{email:string,telephone:string,nom:string,prenom:string}[]>(`http://localhost:8080/api/apprenti/post/formateurs?postId=${postId}`);
+    }
+
+    validatePostByApprenit(postId:number):Observable<Boolean>{
+        const postValidateByApprenti = { postId:postId  };
+        const headers = new HttpHeaders().set('Content-Type', 'application/json');
+        return this.http.post<Boolean>("http://localhost:8080/api/apprenti/post/validate",postValidateByApprenti,{ headers: headers });
+    }
 }

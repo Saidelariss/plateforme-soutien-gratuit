@@ -27,6 +27,12 @@ export class ProfileApprentiComponent implements OnInit {
     {id:3, nom: 'math', formateurs: [], posts:[]},
     {id:2, nom: 'physique', formateurs: [], posts:[]}];
 
+    formateursPost:{email:string,telephone:string}[][]=[]
+
+    DetailsFormateur:Boolean=false;
+
+    acceptedFormateur:string;
+
 
   // postService: PostService;
   // formBuilder: FormBuilder;
@@ -77,6 +83,11 @@ export class ProfileApprentiComponent implements OnInit {
       })
     
   }
+
+
+  validatePostByApprenti(postId:number,apprentiEmail:string){
+
+  }
   
 
   // ngOnInit() {
@@ -112,19 +123,36 @@ export class ProfileApprentiComponent implements OnInit {
   // }
 
 
- 
+  getFormateursByPost(postId:number){
+    this.postService.getFormateursByPost(postId).subscribe({
+      next:(response)=>{
+          this.formateursPost[postId]=response;
+      }, 
+      error:(error)=>{
+        console.log(error)
+      }
+    })
+  }
 
   getPosts(): void{
     this.postService.getAllPostsByApprenti(this.authService.authenticatedUser.username).subscribe(
       (response) => {
         console.log(JSON.stringify(response))
         this.posts=response;
+        for(let post of this.posts){
+        this.getFormateursByPost(post.id);
+        }
+
         // this.posts = response
       },
       (error: HttpErrorResponse) => {
         alert(error.message);
       }
     );
+  }
+  afficherDetailsFormateur(email:string){
+    this.acceptedFormateur=email;
+    this.DetailsFormateur=true;
   }
 
   // public onAddPost(addFor: NgForm): void {

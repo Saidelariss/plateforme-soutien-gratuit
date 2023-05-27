@@ -43,7 +43,7 @@
                     <span class="description">Friends</span>
                   </div> -->
                   <div>
-                    <span class="heading">0</span>
+                    <span class="heading">{{posts.length}}</span>
                     <span class="description">Posts</span>
                   </div>
                   <!-- <div>
@@ -185,6 +185,45 @@
             <h5>{{post.titre}}</h5>
             <h5>{{post.competenceName}}</h5>
             <p>{{post.contenu}}</p>
+            
+            <div *ngFor="let item of formateursPost[post.id]">
+            <li  class="position-relative booking">
+              <div class="media">
+                  <div class="msg-img">
+                      <img src="https://bootdey.com/img/Content/avatar/avatar6.png" alt="">
+                  </div>
+                  <div class="media-body">
+                      <h5 class="mb-4">{{item.nom}} {{item.prenom}} <span class="badge badge-primary mx-3">Pending</span></h5>
+                  </div>
+              </div>
+              <div class="buttons-to-right">
+                  <a class="btn-gray mr-2"><i class="far fa-times-circle mr-2"></i> Rejeter</a>
+                  <a  class="btn-gray"  (click)="afficherDetailsFormateur(item.email)"><i class="far fa-check-circle mr-2"></i> Approuver</a>
+              </div>
+          </li>
+
+          <li *ngIf="acceptedFormateur==item.email" class="position-relative booking">
+            <div class="media">
+                <div class="msg-img">
+                    <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="">
+                </div>
+                <div class="media-body">
+                    <h5 class="mb-4"> {{item.nom}} {{item.prenom}}<span class="badge badge-success ml-3">Approved</span></h5>
+                    <div class="mb-3">
+                        <span class="mr-2 d-block d-sm-inline-block mb-2 mb-sm-0">mail:</span>
+                        <span class="bg-light-green">{{item.email}}</span>
+                    </div>
+                    <div class="mb-3">
+                        <span class="mr-2 d-block d-sm-inline-block mb-2 mb-sm-0">phone:</span>
+                        <span class="bg-light-green">{{item.telephone}}</span>
+                    </div>
+                </div>
+            </div>
+        </li>
+      </div>
+        
+        
+
             <!-- <h5>Concernant la probabilité!!!</h5>
             <h6>Maths</h6>
             <p>Supposons que vous avez 10 billes rouges et 5 billes bleues dans un sac. Quelle est la probabilité de choisir une bille rouge au hasard ?</p> -->

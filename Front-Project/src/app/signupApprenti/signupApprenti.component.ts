@@ -50,6 +50,8 @@ userFormGroup! : FormGroup;
 errorMessage: any;
 apprenti!  : Apprenti; 
 
+isRegistrationSuccessful = false;
+
 constructor(private fb: FormBuilder,
             private userService: UserService) { 
                 this.apprenti={
@@ -84,7 +86,10 @@ constructor(private fb: FormBuilder,
         this.userService.saveApprenti(this.apprenti).subscribe({
           next:(user)=>{
             console.log(`l'utilisateur enregistré est : ${JSON.stringify(user)} `)
-            alert("Your registration is successful")
+            // alert("Your registration is successful")
+                // Une fois l'inscription réussie, affichez la notification de succès
+                this.isRegistrationSuccessful = true;
+
           },
           error : (err)=>{
         console.log(err);

@@ -10,4 +10,5 @@ export interface Post{
     apprenti?: Apprenti;
     competence: Competence;
     validations?: Validation[];
+    formateurs? : String[]
 }
