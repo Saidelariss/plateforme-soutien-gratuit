@@ -23,9 +23,14 @@ export class ProfileApprentiComponent implements OnInit {
   selectedCompetence: string;
   competence : string;
   competences: Competence[] = [
-    {id:1, nom: 'java', formateurs: [], posts:[]}, 
+    {id:1, nom: 'programmation informatique', formateurs: [], posts:[]}, 
     {id:3, nom: 'math', formateurs: [], posts:[]},
-    {id:2, nom: 'physique', formateurs: [], posts:[]}];
+    {id:2, nom: 'physique', formateurs: [], posts:[]},
+    {id:4, nom: 'marketing et vente', formateurs: [], posts:[]},
+    {id:5, nom: 'analyse de données', formateurs: [], posts:[]},
+    {id:6, nom: 'langues étrangères', formateurs: [], posts:[]},
+    
+  ];
 
     formateursPost:{email:string,telephone:string}[][]=[]
 

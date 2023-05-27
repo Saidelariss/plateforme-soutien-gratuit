@@ -86,7 +86,7 @@ constructor(private fb: FormBuilder,
         this.userService.saveApprenti(this.apprenti).subscribe({
           next:(user)=>{
             console.log(`l'utilisateur enregistré est : ${JSON.stringify(user)} `)
-            // alert("Your registration is successful")
+             alert("Your registration is successful")
                 // Une fois l'inscription réussie, affichez la notification de succès
                 this.isRegistrationSuccessful = true;
 

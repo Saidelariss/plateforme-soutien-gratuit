@@ -187,6 +187,11 @@
             <p>{{post.contenu}}</p>
             
             <div *ngFor="let item of formateursPost[post.id]">
+              <style>
+                li {
+                  list-style-type: none;
+                }
+              </style>
             <li  class="position-relative booking">
               <div class="media">
                   <div class="msg-img">
