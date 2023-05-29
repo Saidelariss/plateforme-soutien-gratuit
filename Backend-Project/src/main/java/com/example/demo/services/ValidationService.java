@@ -1,7 +1,9 @@
 package com.example.demo.services;
 
 import com.example.demo.dto.FormateurDTO;
+import com.example.demo.dto.FormateurResponse;
 import com.example.demo.dto.PostDTO;
+import com.example.demo.dto.ValidatePostByFormateur;
 import com.example.demo.entities.*;
 import com.example.demo.repositories.PostRepository;
 import com.example.demo.repositories.UtilisateurRepository;
@@ -9,6 +11,9 @@ import com.example.demo.repositories.ValidationRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,11 +28,12 @@ public class ValidationService {
     UtilisateurRepository utilisateurRepository;
     PostRepository postRepository;
 
-    public Boolean validateByFormateur(PostDTO postDTO, Formateur formateur) {
+    public Boolean validatePostByFormateur(ValidatePostByFormateur v) {
         try {
             Validation validation = new Validation();
+            Formateur formateur = (Formateur) utilisateurRepository.findByEmail(v.getEmailFormateur()).orElse(null);
             validation.setFormateur(formateur);
-            Post post = postRepository.findById(postDTO.getId()).orElse(null);
+            Post post = postRepository.findById(v.getPostId()).orElse(null);
             validation.setPost(post);
             validation.setFormateurAccepte(true);
             validation.setApprentiAccepte(false);
@@ -40,10 +46,10 @@ public class ValidationService {
 
     }
 
-    public List<FormateurDTO> getFormateursAccepteByPost(PostDTO postDTO) {
-        List<FormateurDTO> formateurs = new ArrayList<>();
-        Post post = postRepository.findById(postDTO.getId()).orElse(null);
-        FormateurDTO formateurDTO;
+    public List<FormateurResponse> getFormateursByPost(Long postId) {
+       List<FormateurResponse> formateurs = new ArrayList<>();
+        Post post = postRepository.findById(postId).orElse(null);
+        FormateurResponse formateurResponse;
         Formateur formateur;
         // select validation de post
         List<Validation> validations = post.getValidations();
@@ -52,25 +58,27 @@ public class ValidationService {
         for (Validation validation : validations) {
             if (validation.getFormateurAccepte() == true) {
                 formateur = validation.getFormateur();
-                formateurDTO = new FormateurDTO();
-                formateurDTO.setId(formateur.getId());
-                formateurDTO.setPrenom(formateur.getPrenom());
-                formateurDTO.setNom(formateur.getNom());
-                formateurDTO.setEmail(formateur.getEmail());
-                formateurDTO.setTelephone(formateur.getTelephone());
+                formateurResponse = new FormateurResponse();
+                formateurResponse.setPrenom(formateur.getPrenom());
+                formateurResponse.setNom(formateur.getNom());
+                formateurResponse.setEmail(formateur.getEmail());
+                formateurResponse.setTelephone(formateur.getTelephone());
 
-                formateurs.add(formateurDTO);
+                formateurs.add(formateurResponse);
 
             }
         }
         return formateurs;
+
     }
 
 
-    public Boolean validateByApprenti(PostDTO postDTO, FormateurDTO formateurDTO) {
+
+
+    public Boolean validatePostByApprenti(Long postid, String emailFormateur) {
         try {
-            Post post = postRepository.findById(postDTO.getId()).orElse(null);
-            Formateur formateur = (Formateur) utilisateurRepository.findByEmail(formateurDTO.getEmail()).orElse(null);
+            Post post = postRepository.findById(postid).orElse(null);
+            Formateur formateur = (Formateur) utilisateurRepository.findByEmail(emailFormateur).orElse(null);
 
             Validation validation = validationRepository.findByFormateurAndPost(formateur,post).orElse(null);
 
@@ -100,3 +108,6 @@ public class ValidationService {
         else return null;
     }
 }
+
+
+

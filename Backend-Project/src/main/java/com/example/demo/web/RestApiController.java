@@ -152,26 +152,22 @@ public class RestApiController {
     }
 
 
-    @PostMapping("/validateFormateur")
-    public Boolean validateByFormateur(@RequestBody PostDTO postDTO,HttpServletRequest request)
+    @PostMapping("/formateur/post/validate")
+    public Boolean validatePostByFormateur(@RequestBody ValidatePostByFormateur v)
     {
-        Utilisateur utilisateur = getCurrentUser(request);
-        if(utilisateur instanceof Formateur){
-            return validationService.validateByFormateur(postDTO,(Formateur) utilisateur);
-        }
-        else return false;
+            return validationService.validatePostByFormateur(v);
     }
 
-    @GetMapping("/post/listFormateurAccepte")
-    public List<FormateurDTO> getFormateursAccepteByPost(@RequestBody PostDTO postDTO)
+    @GetMapping("/apprenti/post/formateurs")
+    public List<FormateurResponse> getFormateursByPost(@RequestParam Long postId)
     {
-        return validationService.getFormateursAccepteByPost(postDTO);
+        return validationService.getFormateursByPost(postId);
     }
 
-    @PostMapping("/validateApprenti")
-    public Boolean validateByApprenti(@RequestBody PostDTO postDTO,@RequestBody FormateurDTO formateurDTO)
+    @PostMapping("/apprenti/post/validate")
+    public Boolean validatePostByApprenti(@RequestParam Long postId, @RequestParam String emailFormateur)
     {
-        return validationService.validateByApprenti(postDTO,formateurDTO);
+        return validationService.validatePostByApprenti(postId,emailFormateur);
     }
 
     @GetMapping("/FormateurProfil")
