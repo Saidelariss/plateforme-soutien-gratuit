@@ -1,0 +1,12 @@
+.notification {
+    background-color: #f1f1f1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .notification-message {
+    font-weight: bold;
+    color: green;
+  }
+  
