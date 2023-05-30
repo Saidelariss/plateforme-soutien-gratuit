@@ -81,12 +81,14 @@
  
             <!--Changed--> 
             <div class="topnav">
-              <a [routerLink]="['/landing']" class="nav-link-inner--text">Landing</a>
+              <a (click)="NosearchFormateur()" [routerLink]="['/landing']" class="nav-link-inner--text">Landing</a>
               <!-- <a [routerLink]="['/user-profile']" class="nav-link-inner--text">Profile</a> -->
-              <a [routerLink]="['/login']" class="nav-link-inner--text">Login</a>
-              <a [routerLink]="['/registerApprenti']" *ngIf="this.authService.authenticatedUser==undefined" class="nav-link-inner--text">Register</a>
+              <a (click)="NosearchFormateur()" [routerLink]="['/login']" class="nav-link-inner--text">Login</a>
+              <a (click)="NosearchFormateur()" [routerLink]="['/registerApprenti']" *ngIf="this.authService.authenticatedUser==undefined" class="nav-link-inner--text">Register</a>
+              <a (click)="searchFormateur()" *ngIf="this.authService.authenticatedUser!=undefined && this.authService.authenticatedUser.roles[0]=='ROLE_Apprenti' " class="nav-link-inner--text">Recherche Formateurs</a>
               <a type="button" class="btn btn-light--text" *ngIf="this.authService.authenticatedUser!=undefined" (click)="handlelogout()" >Logout</a>
             </div>
+            <!-- <router-outlet></router-outlet> -->
             <!-- <ul class="navbar-nav">
               <li><a class="nav-link">{{authService.authenticatedUser!.nom}}</a></li> 
                <li>

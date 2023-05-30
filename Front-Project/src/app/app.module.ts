@@ -22,6 +22,7 @@ import { FooterComponent } from './shared/footer/footer.component';
 import { HomeModule } from './home/home.module';
 import { LoginComponent } from './login/login.component';
 import { NotificationComponent } from './notification/notification.component';
+import { SearchComponent } from './search/search.component';
 
 
 @NgModule({
@@ -37,7 +38,8 @@ import { NotificationComponent } from './notification/notification.component';
     NavbarComponent,
     FooterComponent,
     LoginComponent,
-    NotificationComponent
+    NotificationComponent,
+    SearchComponent
   ],
   imports: [
     BrowserModule,

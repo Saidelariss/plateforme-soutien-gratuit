@@ -17,6 +17,14 @@ export class NavbarComponent implements OnInit {
                     public authService : UserService) {
     }
 
+
+    searchFormateur(){
+        this.authService.searchFormateur = true;
+    }
+    NosearchFormateur(){
+        this.authService.searchFormateur= false;
+    }
+
     ngOnInit() {
       this.router.events.subscribe((event) => {
         this.isCollapsed = true;

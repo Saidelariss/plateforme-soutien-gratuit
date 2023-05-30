@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { Component, NgModule } from '@angular/core';
 import { CommonModule, } from '@angular/common';
 import { BrowserModule  } from '@angular/platform-browser';
 import { Routes, RouterModule } from '@angular/router';
@@ -12,9 +12,11 @@ import { SignupApprentiComponent } from './signupApprenti/signupApprenti.compone
 import { SignupFormateurComponent } from './signupFormateur/signupFormateur.component';
 import { LandingComponent } from './landing/landing.component';
 import { LoginComponent } from './login/login.component';
+import { SearchComponent } from './search/search.component';
 
 const routes: Routes =[
     { path: 'home',             component: HomeComponent },
+    {path: 'SeachFormateur' , component:SearchComponent},
     //{ path: 'user-profile',     component: ProfileComponent },
     { path: 'register',           component: SignupComponent },
     { path: 'registerApprenti',           component: SignupApprentiComponent },

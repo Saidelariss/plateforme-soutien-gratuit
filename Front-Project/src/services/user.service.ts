@@ -6,11 +6,14 @@ import { Formateur } from '../entities/formateur';
 import { Utilisateur } from '../entities/utilisateur';
 import { environment } from 'src/environments/environment';
 import { Route, Router } from '@angular/router';
+import { FormateurResponse } from 'src/entities/FormateursResponse';
 
 @Injectable({
 providedIn: 'root'
 })
 export class UserService {
+
+    public searchFormateur = false;
 
 private apiServerUrl = environment.apiBaseUrl;
 
@@ -82,6 +85,18 @@ getCurrentUser(): Observable<Utilisateur>{
 isApprenti(): Observable<Boolean>{
     const url = `${this.apiServerUrl}/isapprenti`;
     return this.http.get<Boolean>(url);
+}
+
+
+searchFormateursByKeyword(keyword:string):Observable<FormateurResponse[]>{
+    return this.http.get<FormateurResponse[]>(`http://localhost:8080/api/apprenti/search?keyword=${keyword}`);
+
+
+}
+
+getAllFormateurs():Observable<FormateurResponse[]>{
+    return this.http.get<FormateurResponse[]>(`http://localhost:8080/api/apprenti/formateurs`);
+
 }
 
 

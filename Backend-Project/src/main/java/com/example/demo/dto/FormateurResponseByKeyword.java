@@ -10,10 +10,10 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class FormateurResponse {
+public class FormateurResponseByKeyword {
     private String email;
     private String nom;
     private String prenom;
     private String telephone;
-
+    private List<String> competences = new ArrayList<String>();
 }

@@ -8,6 +8,7 @@ import { PostService } from '../../services/post.service';
 import { Apprenti } from 'src/entities/apprenti';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PostResponse } from 'src/entities/PostResponse';
+import { FormateurResponse } from 'src/entities/FormateursResponse';
 
 @Component({
   selector: 'app-home',
@@ -15,6 +16,14 @@ import { PostResponse } from 'src/entities/PostResponse';
   styleUrls: ['./profileApprenti.component.css']
 })
 export class ProfileApprentiComponent implements OnInit {
+
+
+
+  searchForm : FormGroup;
+
+  searchTerm: string;
+  searchResults: FormateurResponse[] = [];
+
 
   postForm: FormGroup;
   apprenti: Apprenti;
@@ -65,6 +74,11 @@ export class ProfileApprentiComponent implements OnInit {
 
    //DBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
    ngOnInit(): void {
+    this.authService.getAllFormateurs().subscribe({
+      next:(data)=>{
+        this.searchResults = data;
+      }
+    })
     // this.getPosts();
     this.postForm=this.fb.group({
       titre : this.fb.control(""),
@@ -72,10 +86,32 @@ export class ProfileApprentiComponent implements OnInit {
       // selectedCompetence:this.fb.control("")
 
       })
+
+      this.searchForm=this.fb.group({
+        keyword : this.fb.control(""),
+      
+      })
+
+
       this.getPosts();
       // console.log(`competence selectionnée = ${this.selectedCompetence}`)
 
       
+  }
+
+  searchByUsername() {
+    console.log(this.searchForm.value.keyword);
+
+    this.authService.searchFormateursByKeyword(this.searchForm.value.keyword).subscribe({
+      next:(data)=>{
+        console.log(JSON.stringify(data))
+        this.searchResults=data;
+      }
+    })
+    // Effectuer la logique de recherche ici, en utilisant le terme de recherche (this.searchTerm)
+    // et mettre à jour les résultats de recherche (this.searchResults)
+    // Exemple fictif :
+    
   }
 
   addPost(){
@@ -91,7 +127,7 @@ export class ProfileApprentiComponent implements OnInit {
 
 
   validatePostByApprenti(postId:number,apprentiEmail:string){
-
+    
   }
   
 

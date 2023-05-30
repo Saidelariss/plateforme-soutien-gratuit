@@ -58,9 +58,11 @@ export class PostService {
         return this.http.get<{email:string,telephone:string,nom:string,prenom:string}[]>(`http://localhost:8080/api/apprenti/post/formateurs?postId=${postId}`);
     }
 
-    validatePostByApprenit(postId:number):Observable<Boolean>{
-        const postValidateByApprenti = { postId:postId  };
+    validatePostByApprenti(postId:number):Observable<Boolean>{
+       
         const headers = new HttpHeaders().set('Content-Type', 'application/json');
-        return this.http.post<Boolean>("http://localhost:8080/api/apprenti/post/validate",postValidateByApprenti,{ headers: headers });
+        return this.http.get<Boolean>(`http://localhost:8080/api/apprenti/post/validate?postId=${postId}`,{ headers: headers });
     }
+
+
 }

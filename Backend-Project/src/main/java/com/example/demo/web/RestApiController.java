@@ -152,7 +152,6 @@ public class RestApiController {
 
     @PostMapping("/formateur/post/validate")
      public Boolean validatePostByFormateur(@RequestBody ValidatePostByFormateur v) {
-
         Post post = postRepository.findById(v.getPostId()).orElse(null);
         Formateur formateur = (Formateur) utilisateurRepository.findByEmail(v.getEmailFormateur()).orElse(null);
         System.out.println("idpost : " + post.getId() + "   ----  formateur: " + formateur.getNom());
@@ -170,6 +169,10 @@ public class RestApiController {
         return true;
 
     }
+
+    
+
+
 
 
     @GetMapping("/apprenti/post/formateurs")
@@ -190,7 +193,38 @@ public class RestApiController {
 
     }
 
+    @GetMapping("/apprenti/search")
+    public List<FormateurResponseByKeyword> searchFormateursByKeyword(@RequestParam String keyword){
+        List<Utilisateur> utilisateurs=  utilisateurRepository.findByEmailContains(keyword);
+        return getFormateurResponseByKeywords(utilisateurs);
+
+    }
 
 
+    @GetMapping("/apprenti/formateurs")
+    public List<FormateurResponseByKeyword> getAllFormateurs(){
+
+        List<Utilisateur> utilisateurs=  utilisateurRepository.findAll();
+        return getFormateurResponseByKeywords(utilisateurs);
+
+    }
+
+    private List<FormateurResponseByKeyword> getFormateurResponseByKeywords(List<Utilisateur> utilisateurs) {
+        List<FormateurResponseByKeyword> formateurResponseByKeywords = new ArrayList<>();
+        for(Utilisateur user : utilisateurs){
+            if(user instanceof Formateur){
+                FormateurResponseByKeyword formateurResponse = new FormateurResponseByKeyword();
+                formateurResponse.setNom(user.getNom());
+                formateurResponse.setPrenom(user.getPrenom());
+                formateurResponse.setEmail(user.getEmail());
+                formateurResponse.setTelephone(user.getTelephone());
+                for (Competence competence : ((Formateur) user).getCompetences()){
+                    formateurResponse.getCompetences().add(competence.getNom());
+                }
+                formateurResponseByKeywords.add(formateurResponse);
+            }
+        }
+        return formateurResponseByKeywords;
+    }
 
 }
