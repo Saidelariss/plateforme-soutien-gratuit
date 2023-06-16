@@ -25,7 +25,7 @@ public class PostService {
 
     public  Post savePost(PostDTO postDTO){
         Post post = new Post();
-        Competence competence = competenceRepository.findByNom(postDTO.getCompetenceName());
+        Competence competence = competenceRepository.findByNom(postDTO.getCompetenceName()).orElse(null);
         Apprenti apprenti = (Apprenti)utilisateurRepository.findByEmail(postDTO.getEmailApprenti()).orElse(null);
 
         post.setTitre(postDTO.getTitre());

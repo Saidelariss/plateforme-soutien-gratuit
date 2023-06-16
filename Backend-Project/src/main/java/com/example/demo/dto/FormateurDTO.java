@@ -1,20 +1,22 @@
 package com.example.demo.dto;
 
+
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class FormateurResponseByKeyword {
-    private String email;
+
+public class FormateurDTO {
+    private Long id;
     private String nom;
     private String prenom;
+    private String email;
     private String telephone;
     private byte[] image;
-    private List<String> competences = new ArrayList<String>();
 }

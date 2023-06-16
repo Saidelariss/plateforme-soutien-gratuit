@@ -22,5 +22,9 @@ public abstract class Utilisateur {
     private String email;
     private String telephone;
 
+    @Column(length = 100000)
+    @Lob
+    private byte[] image;
+
 }
 

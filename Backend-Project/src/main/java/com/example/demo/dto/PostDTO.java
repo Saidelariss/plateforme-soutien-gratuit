@@ -8,6 +8,7 @@ import lombok.Setter;
 @Getter @Setter
 @AllArgsConstructor @NoArgsConstructor
 public class PostDTO {
+    private Long id;
     private String titre;
     private String contenu;
     private String emailApprenti;

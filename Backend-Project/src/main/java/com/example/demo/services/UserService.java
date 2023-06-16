@@ -1,5 +1,6 @@
 package com.example.demo.services;
 
+import com.example.demo.dto.FormateurResponseByKeyword;
 import com.example.demo.entities.Apprenti;
 import com.example.demo.entities.Competence;
 import com.example.demo.entities.Formateur;
@@ -10,7 +11,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,8 +49,17 @@ public class UserService {
         }
         List<Competence> competences = new ArrayList<>();
         for (String competencesName : competencesNames) {
-            Competence c = competenceRepository.findByNom(competencesName);
-            competences.add(c);
+            Competence c = competenceRepository.findByNom(competencesName).orElse(null);
+            if(c==null)
+            {
+                Competence competence = new Competence();
+                competence.setNom(competencesName);
+                competence = competenceRepository.save(competence);
+                competence.getFormateurs().add(formateur);
+                competences.add(competence);
+
+            }
+            else {competences.add(c);}
         }
         formateur.setCompetences(competences);
 
@@ -56,5 +68,58 @@ public class UserService {
         }
         return (Formateur) utilisateurRepository.save(formateur);
     }
+
+    public List<FormateurResponseByKeyword> searchFormateursByKeyword(String keyword){
+        List<Utilisateur> utilisateurs=  utilisateurRepository.findByEmailContains(keyword);
+        return getFormateurResponseByKeywords(utilisateurs);
+
+    }
+    public List<FormateurResponseByKeyword> getAllFormateurs(){
+
+        List<Utilisateur> utilisateurs=  utilisateurRepository.findAll();
+        return getFormateurResponseByKeywords(utilisateurs);
+
+    }
+    private List<FormateurResponseByKeyword> getFormateurResponseByKeywords(List<Utilisateur> utilisateurs) {
+        List<FormateurResponseByKeyword> formateurResponseByKeywords = new ArrayList<>();
+        for(Utilisateur user : utilisateurs){
+            if(user instanceof Formateur){
+                FormateurResponseByKeyword formateurResponse = new FormateurResponseByKeyword();
+                formateurResponse.setNom(user.getNom());
+                formateurResponse.setPrenom(user.getPrenom());
+                formateurResponse.setEmail(user.getEmail());
+                formateurResponse.setTelephone(user.getTelephone());
+                formateurResponse.setImage(user.getImage());
+                for (Competence competence : ((Formateur) user).getCompetences()){
+                    formateurResponse.getCompetences().add(competence.getNom());
+                }
+                formateurResponseByKeywords.add(formateurResponse);
+            }
+        }
+        return formateurResponseByKeywords;
+    }
+
+
+
+        public void telechargerImageProfil(Long id, MultipartFile image) throws IOException {
+            Utilisateur utilisateur = utilisateurRepository.findById(id).orElse(null);
+
+            utilisateur.setImage(image.getBytes());
+            utilisateurRepository.save(utilisateur);
+        }
+
+        public byte[] recupererImageProfil(Long id) {
+            Utilisateur utilisateur = utilisateurRepository.findById(id).orElse(null);
+            return utilisateur.getImage();
+        }
+
+        public void modifierImageProfil(Long id, MultipartFile image) throws IOException {
+            Utilisateur utilisateur = utilisateurRepository.findById(id).orElse(null);
+            utilisateur.setImage(image.getBytes());
+            utilisateurRepository.save(utilisateur);
+        }
+
+
+
 
 }

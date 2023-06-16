@@ -15,5 +15,6 @@ public class FormateurResponse {
     private String nom;
     private String prenom;
     private String telephone;
+    private byte[] image;
 
 }

@@ -11,9 +11,12 @@ import com.example.demo.security.UserInfoDetailsService;
 import com.example.demo.security.UserInfoUserDetails;
 import com.example.demo.services.PostService;
 import com.example.demo.services.UserService;
+import com.example.demo.services.ValidationService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,7 +25,9 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +39,8 @@ public class RestApiController {
 
     UserService userService;
     PostService postService;
+    ValidationService validationService;
+
     CompetenceRepository competenceRepository;
     UtilisateurRepository utilisateurRepository;
 
@@ -151,80 +158,54 @@ public class RestApiController {
     }
 
     @PostMapping("/formateur/post/validate")
-     public Boolean validatePostByFormateur(@RequestBody ValidatePostByFormateur v) {
-        Post post = postRepository.findById(v.getPostId()).orElse(null);
-        Formateur formateur = (Formateur) utilisateurRepository.findByEmail(v.getEmailFormateur()).orElse(null);
-        System.out.println("idpost : " + post.getId() + "   ----  formateur: " + formateur.getNom());
-        Validation validation = new Validation();
-        validation.setPost(post);
-        validation.setFormateur(formateur);
-        validation.setFormateurAccepte(true);
-        validation.setApprentiAccepte(false);
-        validationRepository.save(validation);
-        formateur.getValidations().add(validation);
-        post.getValidations().add(validation);
-        utilisateurRepository.save(formateur);
-        postRepository.save(post);
-
-        return true;
-
+    public Boolean validatePostByFormateur(@RequestBody ValidatePostByFormateur v)
+    {
+        return validationService.validatePostByFormateur(v);
     }
-
-    
-
-
-
 
     @GetMapping("/apprenti/post/formateurs")
-    public List<FormateurResponse> getFormateursByPost(@RequestParam Long postId){
-        Post post = postRepository.findById(postId).orElse(null);
-        List<Validation> validations = validationRepository.findByPost(post);
-        List<FormateurResponse> formateurResponses = new ArrayList<>();
-        for (Validation v : validations){
-            FormateurResponse formateurResponse = new FormateurResponse();
-            formateurResponse.setEmail(v.getFormateur().getEmail());
-            formateurResponse.setTelephone(v.getFormateur().getTelephone());
-            formateurResponse.setNom(v.getFormateur().getNom());
-            formateurResponse.setPrenom(v.getFormateur().getPrenom());
-            formateurResponses.add(formateurResponse);
-        }
-        return formateurResponses;
-
-
+    public List<FormateurResponse> getFormateursByPost(@RequestParam Long postId)
+    {
+        return validationService.getFormateursByPost(postId);
     }
+
+    @PostMapping("/apprenti/post/validate")
+    public Boolean validatePostByApprenti(@RequestParam Long postId, @RequestParam String emailFormateur)
+    {
+        return validationService.validatePostByApprenti(postId,emailFormateur);
+    }
+
 
     @GetMapping("/apprenti/search")
     public List<FormateurResponseByKeyword> searchFormateursByKeyword(@RequestParam String keyword){
-        List<Utilisateur> utilisateurs=  utilisateurRepository.findByEmailContains(keyword);
-        return getFormateurResponseByKeywords(utilisateurs);
+        return userService.searchFormateursByKeyword(keyword);
 
     }
-
 
     @GetMapping("/apprenti/formateurs")
     public List<FormateurResponseByKeyword> getAllFormateurs(){
 
-        List<Utilisateur> utilisateurs=  utilisateurRepository.findAll();
-        return getFormateurResponseByKeywords(utilisateurs);
-
+        return userService.getAllFormateurs();
     }
 
-    private List<FormateurResponseByKeyword> getFormateurResponseByKeywords(List<Utilisateur> utilisateurs) {
-        List<FormateurResponseByKeyword> formateurResponseByKeywords = new ArrayList<>();
-        for(Utilisateur user : utilisateurs){
-            if(user instanceof Formateur){
-                FormateurResponseByKeyword formateurResponse = new FormateurResponseByKeyword();
-                formateurResponse.setNom(user.getNom());
-                formateurResponse.setPrenom(user.getPrenom());
-                formateurResponse.setEmail(user.getEmail());
-                formateurResponse.setTelephone(user.getTelephone());
-                for (Competence competence : ((Formateur) user).getCompetences()){
-                    formateurResponse.getCompetences().add(competence.getNom());
-                }
-                formateurResponseByKeywords.add(formateurResponse);
-            }
-        }
-        return formateurResponseByKeywords;
+    @PostMapping("/user/image")
+    public void telechargerImageProfil(@RequestParam Long id, @RequestParam("image") MultipartFile image) throws IOException {
+        userService.telechargerImageProfil(id, image);
     }
+
+    @GetMapping("/user/image")
+    public ResponseEntity<byte[]> recupererImageProfil(@RequestParam Long id) {
+        byte[] image = userService.recupererImageProfil(id);
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(image);
+    }
+
+    @PutMapping("/user/image")
+    public void modifierImageProfil(@RequestParam Long id, @RequestParam("image") MultipartFile image) throws IOException {
+        userService.modifierImageProfil(id, image);
+    }
+
+
 
 }

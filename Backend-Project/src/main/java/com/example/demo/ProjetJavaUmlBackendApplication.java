@@ -39,8 +39,8 @@ public class ProjetJavaUmlBackendApplication {
     CommandLineRunner commandLineRunner(CompetenceRepository competenceRepository,UtilisateurRepository utilisateurRepository,
                                         PasswordEncoder passwordEncoder){
         return args ->{
-            Competence competence1 = competenceRepository.findByNom("java");
-            Competence competence2 = competenceRepository.findByNom("math");
+            Competence competence1 = competenceRepository.findByNom("java").orElse(null);
+            Competence competence2 = competenceRepository.findByNom("math").orElse(null);
             Formateur formateur1 = (Formateur) utilisateurRepository.findByEmail("formateur.said@ehtp.ac.ma").orElse(null);
 
             if (formateur1 == null) {
@@ -50,6 +50,7 @@ public class ProjetJavaUmlBackendApplication {
                 formateur1.setEmail("formateur.said@ehtp.ac.ma");
                 formateur1.setTelephone("0645251329");
                 formateur1.setPassword(passwordEncoder.encode("1234"));
+                formateur1.setImage(null);
 
                 formateur1 = utilisateurRepository.save(formateur1); // Sauvegarder le formateur et obtenir la référence mise à jour
 
